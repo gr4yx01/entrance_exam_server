@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:latest  # Use the latest PostgreSQL image
+    container_name: entrance  # Name of the container
+    environment:
+      POSTGRES_DB: entrance  # Name of the database to create
+      POSTGRES_USER: mawizle    # Database user
+      POSTGRES_PASSWORD: nnaeee  # Database password
+    ports:
+      - "4006:5432"  # Map host port 4005 to container port 5432
+    # volumes:
+    #   - postgres_data: /var/lib/postgresql/data

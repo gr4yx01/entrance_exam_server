@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RegistrationStatus {
+  PENDING
+  COMPLETED
+}
+
 model Admin {
   id      String   @id @default(cuid())
   username String   @unique
@@ -26,15 +31,17 @@ model Student {
   password String
   school  String
   age     Int
-  registrations Registration[]
+  results Result[]
 }
 
 model Exam {
   id          String      @id @default(cuid())
   name        String
   description String
+  duration    Int
+  noOfQuestions Int
   questions   Question[]
-  registrations Registration[]
+  results Result[]
 }
 
 model Question {
@@ -53,11 +60,12 @@ model Option {
   questionId String
 }
 
-model Registration {
-  id        String   @id @default(cuid())
-  student   Student  @relation(fields: [studentId], references: [id])
-  studentId String
-  exam      Exam     @relation(fields: [examId], references: [id])
-  examId    String
-  score     Int
+model Result {
+  id            String   @id @default(cuid())
+  student       Student  @relation(fields: [studentId], references: [id])
+  studentId     String
+  exam          Exam     @relation(fields: [examId], references: [id])
+  examId        String
+  score         Int
 }
+

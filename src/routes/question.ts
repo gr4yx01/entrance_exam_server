@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { addQuestion } from "../controller/question";
+import { addQuestion, deleteQuestion } from "../controller/question";
+import { isAdmin, verifyToken } from "../middleware/auth";
 
 const questionRouter = Router()
 
-questionRouter.post('/:examId', addQuestion)
+questionRouter.post('/:examId', verifyToken, isAdmin, addQuestion)
 
-questionRouter.delete('/:examId/:questionId', addQuestion)
+questionRouter.delete('/:questionId', verifyToken, isAdmin, deleteQuestion)
+
+export default questionRouter

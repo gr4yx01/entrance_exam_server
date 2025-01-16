@@ -2,17 +2,19 @@ import { Request, Response } from "express";
 import { prisma } from "../db";
 
 const createExam = async (req: Request, res: Response) => {
-    const { name, description } = req.body
+    const { name, description, duration, noOfQuestions } = req.body
 
     try {
-        const res = await prisma.exam.create({
+        const exam = await prisma.exam.create({
             data: {
                 name,
-                description
+                description,
+                duration,
+                noOfQuestions
             }
         })
 
-        res.status(201).json({ message: 'Exam created', data: res })
+        res.status(201).json({ message: 'Exam created' })
     } catch (err: any) {
         res.status(500).json({ message: err.message })
     }
@@ -22,7 +24,7 @@ const deleteExam = async (req: Request, res: Response) => {
     const { id } = req.params
 
     try {
-        const res = await prisma.exam.delete({
+         await prisma.exam.delete({
             where: {
                 id: id
             }
@@ -39,13 +41,13 @@ const getExamDetail = async (req: Request, res: Response) => {
     const { id } = req.params
 
     try {
-        const res = await prisma.exam.findUnique({
+        const result = await prisma.exam.findUnique({
             where: {
                 id: id
             }
         })
 
-        res.status(200).json({ message: 'Exam detail', data: res })
+        res.status(200).json({ message: 'Exam detail', data: result })
 
     } catch (err: any) {
         res.status(500).json({ message: err.message })
@@ -55,17 +57,15 @@ const getExamDetail = async (req: Request, res: Response) => {
 const submitExam = async (req: Request, res: Response) => {
     const { id } = req.params
     const { score } = req.body
-    // include req.userId
 
-    
     try {
-        const submittedExam = await prisma.registration.update({
+        const submittedExam = await prisma.result.update({
             where: {
-                
+                id
             },
             data: {
                 examId: id,
-                userId: '',
+                studentId: req.userId,
                 score
             }
         })
@@ -100,10 +100,53 @@ const getExamQuestion = async (req: Request, res: Response) => {
     }
 }
 
+const participateInExam = async (req: Request, res: Response) => {
+    const { id } = req.params
+
+    try {
+        const exam = await prisma.exam.findUnique({
+            where: {
+                id
+            }
+        })
+
+        if (!exam) {
+            res.status(404).json({ message: 'Exam not found' })
+            return
+        }
+
+        const alreadyTaken = await prisma.result.findFirst({
+            where: {
+                examId: id,
+                studentId: req.userId
+            }
+        })
+
+        if(alreadyTaken) {
+            res.status(400).json({ message: 'You have already taken this exam' })
+            return
+        }
+
+        const result = await prisma.result.create({
+            data: {
+                examId: id,
+                studentId: req.userId || '',
+                score: 0
+            }
+        })
+
+        res.status(201).json({ message: 'Exam started', data: result })
+
+    } catch (err) {
+        res.status(500).json({ message: 'An error occured' })
+    }
+}
+
 export {
     createExam,
     deleteExam,
     getExamDetail,
     submitExam,
-    getExamQuestion
+    getExamQuestion,
+    participateInExam
 }
