@@ -218,9 +218,31 @@ const studentRegistration = async (req: Request, res: Response) => {
     }
 }
 
+const getProfile = async (req: Request, res: Response) => {
+    const userId = req.userId
+
+    try {
+        const user = await prisma.student.findFirst({
+            where: {
+                id: userId
+            }
+        })
+
+        res.status(200).json({
+            data: user
+        })
+
+    } catch (err) {
+        res.status(500).json({
+            message: 'An error occurred'
+        })
+    }
+}
+
 export {
     loginAsAdministrator,
     registerAsAdministrator,
     studentLogin,
-    studentRegistration
+    studentRegistration,
+    getProfile
 }

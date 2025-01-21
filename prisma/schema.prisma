@@ -49,7 +49,7 @@ model Question {
   question    String
   options     Option[]
   correct     String
-  exam        Exam     @relation(fields: [examId], references: [id])
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
   examId      String
 }
 
@@ -67,5 +67,7 @@ model Result {
   exam          Exam     @relation(fields: [examId], references: [id])
   examId        String
   score         Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt @default(now())
 }
 
