@@ -142,11 +142,28 @@ const participateInExam = async (req: Request, res: Response) => {
     }
 }
 
+const getAllExam = async (req: Request, res: Response) => {
+    try {
+        const exams = await prisma.exam.findMany({
+            include: {
+                questions: true
+            }
+        })
+
+        res.status(200).json(exams)
+    } catch (err) {
+        res.status(500).json({
+            message: 'An error occurred'
+        })
+    }
+}
+
 export {
     createExam,
     deleteExam,
     getExamDetail,
     submitExam,
     getExamQuestion,
-    participateInExam
+    participateInExam,
+    getAllExam
 }

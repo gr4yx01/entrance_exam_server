@@ -104,12 +104,12 @@ const registerAsAdministrator = async (req: Request, res: Response) => {
 }
 
 const studentLogin = async (req: Request, res: Response) => {
-    const { username, password } = req.body
+    const { email, password } = req.body
 
     try {
         const student = await prisma.student.findFirst({
             where: {
-                username
+                email
             }
         })
 
@@ -165,6 +165,19 @@ const studentRegistration = async (req: Request, res: Response) => {
         if(userExist) {
             res.status(400).json({
                 message: 'Admin already exists'
+            })
+            return
+        }
+
+        const emailExist = await prisma.student.findFirst({
+            where: {
+                email
+            }
+        })
+
+        if(emailExist) {
+            res.status(400).json({
+                message: 'Email already exists'
             })
             return
         }

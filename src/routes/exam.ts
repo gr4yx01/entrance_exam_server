@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createExam, deleteExam, getExamDetail, getExamQuestion, participateInExam, submitExam } from "../controller/exam";
+import { createExam, deleteExam, getAllExam, getExamDetail, getExamQuestion, participateInExam, submitExam } from "../controller/exam";
 import { isAdmin, verifyToken } from "../middleware/auth";
 
 const examRouter = Router()
@@ -16,5 +16,7 @@ examRouter.post('/:id', submitExam)
 examRouter.post('/:id/participate', participateInExam)
 
 examRouter.get('/:id/questions', getExamQuestion)
+
+examRouter.get('/', getAllExam)
 
 export default examRouter
